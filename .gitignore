@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build outputs
+frontend/dist/
+backend/dist/
+
+# Database (dados reais - não versionar)
+backend/deliveries.db
+backend/deliveries.db-shm
+backend/deliveries.db-wal
+backend/*.backup.*.db
+
+# Uploads (fotos de canhotos - não versionar)
+backend/uploads/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
