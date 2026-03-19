@@ -21,27 +21,21 @@ export default function Login() {
       login(token, user);
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao fazer login');
+      setError(err.response?.data?.error || 'Usuário ou senha inválidos');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+    <div className="flex items-center justify-center min-h-[60vh]">
       <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8 gap-3">
-          <img src="/logo-cpfl.jpeg" alt="CPFL Funil" className="h-16 object-contain rounded" />
-          <div className="text-center">
-            <h1 className="text-xl font-bold text-gray-100">CPFL Funil</h1>
-            <p className="text-xs text-gray-500 tracking-widest uppercase mt-0.5">Roteirizador</p>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+          <div className="flex flex-col items-center mb-6 gap-2">
+            <img src="/logo-cpfl.jpeg" alt="CPFL Funil" className="h-14 object-contain rounded" />
+            <h2 className="text-lg font-semibold text-gray-100 mt-1">Acesso ao sistema</h2>
+            <p className="text-xs text-gray-500">Entre com suas credenciais para continuar</p>
           </div>
-        </div>
-
-        {/* Card */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-7">
-          <h2 className="text-lg font-semibold text-gray-100 mb-5">Entrar no sistema</h2>
 
           {error && (
             <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2.5 mb-4">
@@ -84,10 +78,6 @@ export default function Login() {
             </button>
           </form>
         </div>
-
-        <p className="text-center text-xs text-gray-700 mt-6">
-          CPFL Funil Logística · Acesso restrito
-        </p>
       </div>
     </div>
   );

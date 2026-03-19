@@ -1,6 +1,18 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { PlusCircle, Truck, Map, History, LayoutDashboard, Eye, Users, LogOut } from 'lucide-react';
+import { PlusCircle, Truck, Map, History, LayoutDashboard, Eye, Users, LogOut, LogIn } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+
+const protectedItems = [
+  { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/nova-viagem', icon: PlusCircle,       label: 'Nova Viagem' },
+  { to: '/entregas',    icon: Truck,            label: 'Entregas' },
+  { to: '/roteiro',     icon: Map,              label: 'Roteiro' },
+  { to: '/historico',   icon: History,          label: 'Histórico' },
+];
+
+const publicItems = [
+  { to: '/status', icon: Eye, label: 'Status Entregas' },
+];
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -12,12 +24,8 @@ export default function Sidebar() {
   };
 
   const navItems = [
-    { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/nova-viagem', icon: PlusCircle,       label: 'Nova Viagem' },
-    { to: '/entregas',    icon: Truck,            label: 'Entregas' },
-    { to: '/roteiro',     icon: Map,              label: 'Roteiro' },
-    { to: '/historico',   icon: History,          label: 'Histórico' },
-    { to: '/status',      icon: Eye,              label: 'Status Entregas' },
+    ...(user ? protectedItems : []),
+    ...publicItems,
     ...(user?.role === 'admin' ? [{ to: '/usuarios', icon: Users, label: 'Usuários' }] : []),
   ];
 
@@ -53,19 +61,37 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Usuário logado + logout */}
+      {/* Rodapé: logado → info do usuário + sair | deslogado → botão entrar */}
       <div className="p-3 border-t border-gray-800 space-y-2">
-        <div className="px-3 py-2 rounded-lg bg-gray-800/50">
-          <p className="text-xs text-gray-300 font-medium truncate">{user?.nome}</p>
-          <p className="text-[10px] text-gray-600 truncate">{user?.username}</p>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-gray-800 hover:text-red-400 transition-colors"
-        >
-          <LogOut size={15} />
-          Sair
-        </button>
+        {user ? (
+          <>
+            <div className="px-3 py-2 rounded-lg bg-gray-800/50">
+              <p className="text-xs text-gray-300 font-medium truncate">{user.nome}</p>
+              <p className="text-[10px] text-gray-600 truncate">{user.username}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-gray-800 hover:text-red-400 transition-colors"
+            >
+              <LogOut size={15} />
+              Sair
+            </button>
+          </>
+        ) : (
+          <NavLink
+            to="/login"
+            className={({ isActive }) =>
+              `flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-cpfl-navy text-white border border-cpfl-blue/30'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-100'
+              }`
+            }
+          >
+            <LogIn size={15} />
+            Entrar
+          </NavLink>
+        )}
       </div>
     </aside>
   );
