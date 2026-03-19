@@ -1,16 +1,26 @@
-import { NavLink } from 'react-router-dom';
-import { PlusCircle, Truck, Map, History, LayoutDashboard, Eye } from 'lucide-react';
-
-const navItems = [
-  { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/nova-viagem', icon: PlusCircle,       label: 'Nova Viagem' },
-  { to: '/entregas',    icon: Truck,            label: 'Entregas' },
-  { to: '/roteiro',     icon: Map,              label: 'Roteiro' },
-  { to: '/historico',   icon: History,          label: 'Histórico' },
-  { to: '/status',      icon: Eye,              label: 'Status Entregas' },
-];
+import { NavLink, useNavigate } from 'react-router-dom';
+import { PlusCircle, Truck, Map, History, LayoutDashboard, Eye, Users, LogOut } from 'lucide-react';
+import { useAuthStore } from '../store/useAuthStore';
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
+  const navItems = [
+    { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/nova-viagem', icon: PlusCircle,       label: 'Nova Viagem' },
+    { to: '/entregas',    icon: Truck,            label: 'Entregas' },
+    { to: '/roteiro',     icon: Map,              label: 'Roteiro' },
+    { to: '/historico',   icon: History,          label: 'Histórico' },
+    { to: '/status',      icon: Eye,              label: 'Status Entregas' },
+    ...(user?.role === 'admin' ? [{ to: '/usuarios', icon: Users, label: 'Usuários' }] : []),
+  ];
+
   return (
     <aside className="w-56 bg-gray-900 border-r border-gray-800 flex flex-col">
       {/* Logo CPFL */}
@@ -43,9 +53,19 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Rodapé */}
-      <div className="p-4 border-t border-gray-800">
-        <p className="text-[10px] text-gray-600 text-center">CPFL Funil · Logística</p>
+      {/* Usuário logado + logout */}
+      <div className="p-3 border-t border-gray-800 space-y-2">
+        <div className="px-3 py-2 rounded-lg bg-gray-800/50">
+          <p className="text-xs text-gray-300 font-medium truncate">{user?.nome}</p>
+          <p className="text-[10px] text-gray-600 truncate">{user?.username}</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-gray-800 hover:text-red-400 transition-colors"
+        >
+          <LogOut size={15} />
+          Sair
+        </button>
       </div>
     </aside>
   );

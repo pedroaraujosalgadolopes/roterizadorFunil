@@ -1,9 +1,20 @@
 import { getDb } from './database';
+import bcrypt from 'bcryptjs';
 
 export function initSchema() {
   const db = getDb();
 
   db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('admin', 'user')),
+      ativo INTEGER NOT NULL DEFAULT 1,
+      data_criacao TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS trips (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
@@ -52,6 +63,12 @@ export function initSchema() {
   for (const sql of migrations) {
     try { db.exec(sql); } catch { /* coluna já existe */ }
   }
+
+  // Seed admin padrão
+  const adminHash = bcrypt.hashSync('admin123', 10);
+  db.prepare(
+    `INSERT OR IGNORE INTO users (nome, username, password_hash, role) VALUES (?, ?, ?, ?)`
+  ).run('Administrador', 'admin', adminHash, 'admin');
 
   console.log('Database schema initialized successfully.');
 }
